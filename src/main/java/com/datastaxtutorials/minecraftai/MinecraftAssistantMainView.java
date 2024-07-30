@@ -1,13 +1,18 @@
 package com.datastaxtutorials.minecraftai;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.messages.MessageInput;
+import com.vaadin.flow.component.messages.MessageList;
+import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 
@@ -15,20 +20,34 @@ import com.vaadin.flow.server.StreamResource;
 public class MinecraftAssistantMainView extends VerticalLayout {
 
 	private static final long serialVersionUID = 6300314719664762371L;
+    private String USER_AVATAR = "https://api.dicebear.com/6.x/big-ears-neutral/svg?seed=Molly";
+    private String AI_AVATAR = "https://api.dicebear.com/6.x/bottts/svg?seed=Sheba";
 
 	private MinecraftAssistantController controller;
-	private Paragraph response;
-	private TextField queryField;
-	private Button queryButton;
+	private MessageList chat;
+	private MessageInput query;
+	private List<MessageListItem> messages;
 	
 	public MinecraftAssistantMainView() {
 		controller = new MinecraftAssistantController();
+		messages = new ArrayList<>();
 		
-		getStyle().set("background-color", "black");
+		//getStyle().set("background-color", "black");
 		
 		add(showImage());
-		add(showResponse());
-		add(showQueryBar());
+		
+		chat = new MessageList();
+		query = new MessageInput();
+
+		add(chat, query);
+		
+		query.addSubmitListener(this::getResponse);
+		
+		chat.setSizeFull();
+		chat.setMaxWidth("800px");
+		
+		query.setWidthFull();
+		query.setMaxWidth("800px");
 	}
 	
 	public Component showImage() {
@@ -46,44 +65,16 @@ public class MinecraftAssistantMainView extends VerticalLayout {
 		return layout;
 	}
 	
-	public Component showResponse() {
-		HorizontalLayout layout = new HorizontalLayout();
+	private void getResponse(MessageInput.SubmitEvent submitEvent) {
 		
-		response = new Paragraph();
-		response.setWidth("500px");
-		response.setHeight("100px");
-		response.getStyle().set("background-color", "aliceblue");
-		response.getStyle().set("white-space", "pre-line");
-		// enable scroll bars?
-		
-		layout.add(response);
-		return layout;
-	}
+		String req = submitEvent.getValue();
+		Instant requestTime = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+		messages.add(new MessageListItem(req, requestTime, "User", USER_AVATAR));
+		chat.setItems(messages);
 
-	public Component showQueryBar() {
-		HorizontalLayout layout = new HorizontalLayout();
-		
-		queryField = new TextField();
-		queryField.setWidth("400px");
-		queryField.getStyle().set("background-color", "gainsboro");
-		queryButton = new Button("Query");
-		queryButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		
-		queryButton.addClickListener(click -> {
-			getResponse();
-		});
-		
-		layout.add(queryField);
-		layout.add(queryButton);
-		
-		return layout;
-	}
-	
-	private void getResponse() {
-		
-		String message = controller.askQuestion(queryField.getValue());
-		response.setText(message);
-		
-		queryField.setValue("");
+		String resp = controller.askQuestion(req);
+		Instant responseTime = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+		messages.add(new MessageListItem(resp, responseTime, "MC Assistant", AI_AVATAR));
+		chat.setItems(messages);
 	}
 }

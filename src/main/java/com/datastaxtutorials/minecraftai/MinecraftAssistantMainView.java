@@ -16,6 +16,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+
 @Route("")
 public class MinecraftAssistantMainView extends VerticalLayout {
 
@@ -28,10 +32,15 @@ public class MinecraftAssistantMainView extends VerticalLayout {
 	private MessageInput query;
 	private List<MessageListItem> messages;
 	
+//	private Parser parser;
+//	private HtmlRenderer renderer;
+	
 	public MinecraftAssistantMainView() {
 		controller = new MinecraftAssistantController();
 		messages = new ArrayList<>();
-		
+//		parser = Parser.builder().build();
+//		renderer = HtmlRenderer.builder().build();
+
 		//getStyle().set("background-color", "black");
 		
 		add(showImage());
@@ -72,9 +81,14 @@ public class MinecraftAssistantMainView extends VerticalLayout {
 		messages.add(new MessageListItem(req, requestTime, "User", USER_AVATAR));
 		chat.setItems(messages);
 
+		// prep for markdown parsing		
 		String resp = controller.askQuestion(req);
+		//Node document = parser.parse(resp);
+		//renderer.render(document);
+		
 		Instant responseTime = LocalDateTime.now().toInstant(ZoneOffset.UTC);
 		messages.add(new MessageListItem(resp, responseTime, "MC Assistant", AI_AVATAR));
+		//messages.add(new MessageListItem(renderer.render(document), responseTime, "MC Assistant", AI_AVATAR));
 		chat.setItems(messages);
 	}
 }

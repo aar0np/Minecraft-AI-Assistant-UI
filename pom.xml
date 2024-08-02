@@ -28,6 +28,11 @@
 			<artifactId>vaadin-spring-boot-starter</artifactId>
 		</dependency>
 
+		<dependency>
+		    <groupId>org.commonmark</groupId>
+		    <artifactId>commonmark</artifactId>
+		    <version>0.22.0</version>
+		</dependency>
 	</dependencies>
 	
 	<dependencyManagement>

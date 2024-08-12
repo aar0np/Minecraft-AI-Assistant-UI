@@ -2,7 +2,7 @@
 A GUI layer on top of a Minecraft AI Assistant API service. Intended to be used with https://github.com/aar0np/minecraftAssistant/tree/main .
 
 
-<img src="carnav.png" width="200" align=right />
+<img src="minecraft_ai_gui.png" width="200" align=right />
 
 ## Requirements
  - Java 21

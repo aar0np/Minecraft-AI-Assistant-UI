@@ -16,7 +16,12 @@ mvn clean install
 ```
 
 ## To run
-It is recommended to run from within an IDE, but it should work with:
+First, run the FastAPI service (see above):
+```
+uvicorn mcwRAGAPI:app
+```
+
+Next, run the GUI. It is recommended to run from within an IDE, but it should work with:
 ```
 java -jar target/minecraftai-0.0.1-SNAPSHOT.jar
 ```
